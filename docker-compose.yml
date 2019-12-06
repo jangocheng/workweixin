@@ -1,0 +1,11 @@
+version: '3'
+services:
+  weixin_app:
+    build: .
+    environment:
+      - TOKEN=${TOKEN}
+      - RECEIVER_ID=${RECEIVER_ID}
+      - AES_KEY=${AES_KEY}
+    container_name: weixin_app
+    ports:
+      - "11111:11111"
