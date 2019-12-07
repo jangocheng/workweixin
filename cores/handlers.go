@@ -65,6 +65,6 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		writeServerError(w)
 		return
 	}
-	log.Printf("receiver data is %s", string(message))
+	_, _ = w.Write(message)
 	w.WriteHeader(http.StatusOK)
 }
