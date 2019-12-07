@@ -50,16 +50,6 @@ func wxPing(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCr
 	_, _ = w.Write(echoStr)
 }
 
-type wxAppMsg struct {
-	ToUserName   string `xml:"ToUserName"`
-	FromUserName string `xml:"FromUserName"`
-	CreateTime   string `xml:"CreateTime"`
-	MsgType      string `xml:"MsgType"`
-	Content      string `xml:"Content"`
-	MsgId        string `xml:"MsgId"`
-	AgentID      string `xml:"AgentID"`
-}
-
 func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
 	sig := r.Form.Get("msg_signature")
 	timeStamp := r.Form.Get("timestamp")
@@ -83,7 +73,22 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		return
 	}
 	rspMsg := "auto-reply-source-message:\n" + message.Content
-	rsp, cryptErr := wx.EncryptMsg(rspMsg, timeStamp, nonce)
+	replyMsgRsp := &wxAppMsg{
+		ToUserName:   message.ToUserName,
+		FromUserName: message.FromUserName,
+		CreateTime:   message.CreateTime,
+		MsgType:      message.MsgType,
+		Content:      rspMsg,
+		MsgId:        message.MsgId,
+		AgentID:      message.AgentID,
+	}
+	msgByte, err := xml.Marshal(replyMsgRsp)
+	if err != nil {
+		log.Printf("marshal data %s error %#v", string(msgByte), err)
+		writeServerError(w)
+		return
+	}
+	rsp, cryptErr := wx.EncryptMsg(string(msgByte), timeStamp, nonce)
 	if cryptErr != nil {
 		log.Printf("encode data %s error %#v", string(msg), cryptErr)
 		writeServerError(w)
