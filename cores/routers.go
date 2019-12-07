@@ -13,5 +13,5 @@ func NewRouters() *mux.Router {
 }
 
 func init() {
-	r.HandleFunc("/api/wx/ping/", WXPing).Methods(http.MethodGet)
+	r.HandleFunc("/api/wx/reply/", WXAutoReply).Methods(http.MethodGet, http.MethodPost)
 }
