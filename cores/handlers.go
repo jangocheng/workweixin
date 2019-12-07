@@ -1,6 +1,7 @@
 package cores
 
 import (
+	"encoding/xml"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -49,6 +50,16 @@ func wxPing(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCr
 	_, _ = w.Write(echoStr)
 }
 
+type wxAppMsg struct {
+	ToUserName   string `xml:"ToUserName"`
+	FromUserName string `xml:"FromUserName"`
+	CreateTime   string `xml:"CreateTime"`
+	MsgType      string `xml:"MsgType"`
+	Content      string `xml:"Content"`
+	MsgId        string `xml:"MsgId"`
+	AgentID      string `xml:"AgentID"`
+}
+
 func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
 	sig := r.Form.Get("msg_signature")
 	timeStamp := r.Form.Get("timestamp")
@@ -59,12 +70,33 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		writeServerError(w)
 		return
 	}
-	message, cryptErr := wx.DecryptMsg(sig, timeStamp, nonce, body)
+	msg, cryptErr := wx.DecryptMsg(sig, timeStamp, nonce, body)
 	if cryptErr != nil {
 		log.Printf("decode error %#v", cryptErr)
 		writeServerError(w)
 		return
 	}
-	_, _ = w.Write(message)
+	message, err := getWXAppMsg(msg)
+	if err != nil {
+		log.Printf("msg %s unmarshal error %#v", string(msg), err)
+		writeServerError(w)
+		return
+	}
+	rspMsg := "auto-reply-source-message:\n" + message.Content
+	rsp, cryptErr := wx.EncryptMsg(rspMsg, timeStamp, nonce)
+	if cryptErr != nil {
+		log.Printf("encode data %s error %#v", string(msg), cryptErr)
+		writeServerError(w)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(rsp)
+}
+
+func getWXAppMsg(msg []byte) (*wxAppMsg, error) {
+	data := &wxAppMsg{}
+	if err := xml.Unmarshal(msg, data); err != nil {
+		return nil, err
+	}
+	return data, nil
 }
