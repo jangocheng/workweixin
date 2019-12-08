@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"automated-bot/cores"
+	"github.com/vnotes/workweixin_app/cores"
 )
 
 func main() {

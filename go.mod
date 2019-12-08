@@ -1,4 +1,4 @@
-module automated-bot
+module github.com/vnotes/workweixin_app
 
 go 1.12
 
