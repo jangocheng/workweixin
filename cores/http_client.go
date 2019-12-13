@@ -8,41 +8,33 @@ import (
 )
 
 type HttpClient struct {
-	Err      error
-	Client   *http.Client
-	Request  *http.Request
+	err     error
+	client  *http.Client
+	request *http.Request
 }
 
 func InitClient(method string, url string, ioBody io.Reader) *HttpClient {
 	c := &HttpClient{
-		Client: &http.Client{},
+		client: &http.Client{},
 	}
 	req, err := http.NewRequest(method, url, ioBody)
 	if err != nil {
-		c.Err = err
+		c.err = err
 		return c
 	}
-	c.Request = req
+	c.request = req
 	return c
 }
 
-func (c *HttpClient) HttpDo() ([]byte, error) {
-	if c.Err != nil {
-		return nil, c.Err
+func (c *HttpClient) HttpDo(v interface{}) error {
+	if c.err != nil {
+		return c.err
 	}
-	resp, err := c.Client.Do(c.Request)
+	resp, err := c.client.Do(c.request)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return body, nil
-}
-
-func (c *HttpClient) HttpResult(v interface{}) error {
-	body, err := c.HttpDo()
 	if err != nil {
 		return err
 	}
@@ -50,4 +42,5 @@ func (c *HttpClient) HttpResult(v interface{}) error {
 		return err
 	}
 	return nil
+
 }

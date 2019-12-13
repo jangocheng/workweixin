@@ -17,3 +17,7 @@
 # vendor/
 
 .idea/
+
+# 编译文件
+main
+workweixin_app

@@ -1,9 +1,10 @@
 package cores
 
 import (
-	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 	"log"
 	"net/http"
+
+	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
 func WriteServerError(w http.ResponseWriter) {
@@ -11,7 +12,7 @@ func WriteServerError(w http.ResponseWriter) {
 	_, _ = w.Write([]byte("server error"))
 }
 
-func WXPing(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
+func WXPong(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
 	sig := r.Form.Get("msg_signature")
 	timeStamp := r.Form.Get("timestamp")
 	nonce := r.Form.Get("nonce")
@@ -25,4 +26,11 @@ func WXPing(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCr
 	}
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(echoStr)
+}
+
+type AccessToken struct {
+	ErrCode     int    `json:"errcode"`
+	ErrMsg      string `json:"errmsg"`
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int    `json:"expires_in"`
 }

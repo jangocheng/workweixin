@@ -1,4 +1,4 @@
-package application
+package app
 
 import (
 	"encoding/xml"
@@ -18,16 +18,16 @@ func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	receiverID := cores.GetConfig().CorPID
+	receiverID := Conf.CorPID
 
-	token := cores.GetConfig().Token
-	aesKey := cores.GetConfig().AesKey
+	token := Conf.Token
+	aesKey := Conf.AesKey
 
 	wxCpt := wxbizmsgcrypt.NewWXBizMsgCrypt(token, aesKey, receiverID, wxbizmsgcrypt.XmlType)
 
 	switch r.Method {
 	case http.MethodGet:
-		cores.WXPing(w, r, wxCpt)
+		cores.WXPong(w, r, wxCpt)
 	case http.MethodPost:
 		wxAutoReplyMsg(w, r, wxCpt)
 	default:
