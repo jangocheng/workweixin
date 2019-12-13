@@ -1,6 +1,7 @@
 package contact
 
 import (
+	"encoding/xml"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,8 +11,6 @@ import (
 )
 
 func WXContactAutoMated(w http.ResponseWriter, r *http.Request) {
-	body, _ := ioutil.ReadAll(r.Body)
-	log.Printf("contact manager %s", string(body))
 	if err := r.ParseForm(); err != nil {
 		log.Printf("parse form error %s", err)
 		cores.WriteServerError(w)
@@ -36,6 +35,44 @@ func WXContactAutoMated(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func WXContactManager(w http.ResponseWriter, r *http.Request, wxCpt *wxbizmsgcrypt.WXBizMsgCrypt) {
+func WXContactManager(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
+	sig := r.Form.Get("msg_signature")
+	timeStamp := r.Form.Get("timestamp")
+	nonce := r.Form.Get("nonce")
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("server read body error %#v", err)
+		cores.WriteServerError(w)
+		return
+	}
+	msg, cryptErr := wx.DecryptMsg(sig, timeStamp, nonce, body)
+	if cryptErr != nil {
+		log.Printf("decode error %#v", cryptErr)
+		cores.WriteServerError(w)
+		return
+	}
 
+	log.Printf("data body %s", string(msg))
+	message, err := getWXContactMsg(msg)
+	if err != nil {
+		log.Printf("msg %s unmarshal error %#v", string(msg), err)
+		cores.WriteServerError(w)
+		return
+	}
+
+	log.Printf("receive data %s", message)
+}
+
+func getWXContactMsg(msg []byte) (*wxContactMsg, error) {
+	data := &wxContactMsg{}
+	if err := xml.Unmarshal(msg, data); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+type wxContactMsg struct {
+	ToUserName string `xml:"ToUserName"`
+	Encrypt    string `xml:"Encrypt"`
+	AgentID    string `xml:"AgentID"`
 }
