@@ -3,9 +3,14 @@ services:
   weixin_app:
     build: .
     environment:
-      - TOKEN=${TOKEN}
-      - RECEIVER_ID=${RECEIVER_ID}
-      - AES_KEY=${AES_KEY}
+      - CorPID=${CorPID}
+      - AgentID=${AgentID}
+      - AppToken=${AppToken}
+      - AppSecret=${AppSecret}
+      - AppAesKey=${AppAesKey}
+      - ContactSecret=${ContactSecret}
+      - ContactToken=${ContactToken}
+      - ContactAesKey=${ContactAesKey}
     container_name: weixin_app
     ports:
       - "11111:11111"
