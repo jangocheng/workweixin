@@ -6,6 +6,7 @@ import (
 
 	"github.com/vnotes/workweixin_app/cores/app"
 	"github.com/vnotes/workweixin_app/cores/contact"
+	_ "github.com/vnotes/workweixin_app/cores/dbs"
 
 	"github.com/gorilla/mux"
 )

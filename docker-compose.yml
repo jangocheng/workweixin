@@ -12,5 +12,23 @@ services:
       - ContactToken=${ContactToken}
       - ContactAesKey=${ContactAesKey}
     container_name: weixin_app
+    links:
+      - mysql_db
+    depends_on:
+      - mysql_db
     ports:
       - "11111:11111"
+
+  mysql_db:
+    image: mysql:8.0.18
+    restart: always
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: notes
+      MYSQL_PASSWORD: notes
+      MYSQL_DATABASE: weixin
