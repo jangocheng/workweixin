@@ -1,0 +1,20 @@
+version: '3.5'
+services:
+  mysql_db:
+    image: mysql:8.0.18
+    restart: always
+    volumes:
+      - ../data/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: notes
+      MYSQL_PASSWORD: notes
+      MYSQL_DATABASE: weixin
+
+networks:
+  default:
+    external:
+      name: weixin_net
