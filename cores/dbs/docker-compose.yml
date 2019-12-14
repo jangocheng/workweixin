@@ -5,6 +5,7 @@ services:
     restart: always
     volumes:
       - ./data/mysql:/var/lib/mysql
+    privileged: true
     ports:
       - 3306:3306
     container_name: mysql_db
