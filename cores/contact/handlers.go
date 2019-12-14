@@ -52,15 +52,13 @@ func WXContactManager(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.
 		return
 	}
 
-	log.Printf("data body %s", string(msg))
 	message, err := getWXContactMsg(msg)
 	if err != nil {
 		log.Printf("msg %s unmarshal error %#v", string(msg), err)
 		cores.WriteServerError(w)
 		return
 	}
-
-	log.Printf("receive data %s", message)
+	log.Printf("receive data %#v", message)
 }
 
 func getWXContactMsg(msg []byte) (*wxContactMsg, error) {
@@ -72,7 +70,15 @@ func getWXContactMsg(msg []byte) (*wxContactMsg, error) {
 }
 
 type wxContactMsg struct {
-	ToUserName string `xml:"ToUserName"`
-	Encrypt    string `xml:"Encrypt"`
-	AgentID    string `xml:"AgentID"`
+	ToUserName     string `xml:"ToUserName"`
+	FromUserName   string `xml:"FromUserName"`
+	UserID         string `xml:"UserID"`
+	Name           string `xml:"Name"`
+	Email          string `xml:"Email"`
+	Department     int    `xml:"Department"`
+	IsLeaderInDept int    `xml:"IsLeaderInDept"`
+	Status         int    `xml:"Status"`
+	CreateTime     int64  `xml:"CreateTime"`
+	Event          string `xml:"Event"`
+	ChangeType     string `xml:"ChangeType"`
 }
