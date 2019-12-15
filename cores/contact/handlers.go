@@ -51,6 +51,7 @@ func WXContactManager(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.
 		cores.WriteServerError(w)
 		return
 	}
+	log.Printf("receive data %s", string(msg))
 
 	message, err := getWXContactMsg(msg)
 	if err != nil {
@@ -58,7 +59,6 @@ func WXContactManager(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.
 		cores.WriteServerError(w)
 		return
 	}
-	log.Printf("receive data %#v", message)
 
 	var eventErr error
 	switch message.ChangeType {

@@ -47,7 +47,6 @@ func (u *UserClient) CreateUser(ctx context.Context, msg *wxContactMsg) error {
 }
 
 func (u *UserClient) UpdateUser(ctx context.Context, msg *wxContactMsg) error {
-	// new user id 无效，测试不可以更改
 	_sql := `
 		UPDATE
 			users
