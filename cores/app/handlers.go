@@ -2,9 +2,11 @@ package app
 
 import (
 	"encoding/xml"
+	"github.com/vnotes/workweixin_app/cores/todos"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/vnotes/workweixin_app/cores"
 
@@ -52,11 +54,17 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		cores.WriteServerError(w)
 		return
 	}
+	log.Printf("app receive data %s", string(msg))
+
 	message, err := getWXAppMsg(msg)
 	if err != nil {
 		log.Printf("msg %s unmarshal error %#v", string(msg), err)
 		cores.WriteServerError(w)
 		return
+	}
+	//nolint:staticcheck
+	if strings.HasPrefix(message.Content, todos.ToDoCmdText) {
+
 	}
 	rspMsg := "auto-reply-source-message:\n" + message.Content
 	replyMsgRsp := &wxAppMsg{
