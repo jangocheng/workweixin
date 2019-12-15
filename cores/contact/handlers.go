@@ -85,19 +85,17 @@ func getWXContactMsg(msg []byte) (*wxContactMsg, error) {
 }
 
 type wxContactMsg struct {
-	ToUserName     string `xml:"ToUserName"`
-	FromUserName   string `xml:"FromUserName"`
-	NewUserID      string `xml:"NewUserID"`
-	Department     string `xml:"Department"`
-	IsLeaderInDept string `xml:"IsLeaderInDept"`
-	Event          string `xml:"Event"`
-	ChangeType     string `xml:"ChangeType"`
+	ToUserName   string `xml:"ToUserName"`
+	FromUserName string `xml:"FromUserName"`
+	Event        string `xml:"Event"`
+	ChangeType   string `xml:"ChangeType"`
 
-	UserID     string `xml:"UserID" db:"user_id"`
-	Name       string `xml:"Name" db:"user_name"`
-	Mobile     string `xml:"Mobile" db:"mobile"`
-	Email      string `xml:"Email" db:"email"`
-	Gender     int    `xml:"Gender" db:"gender"`
-	Status     int    `xml:"Status" db:"state"`
-	CreateTime int64  `xml:"CreateTime" db:"create_time"`
+	UserID     string  `xml:"UserID"`
+	NewUserID  *string `xml:"NewUserID"`
+	Name       *string `xml:"Name"`
+	Mobile     *string `xml:"Mobile"`
+	Email      *string `xml:"Email"`
+	Gender     *int    `xml:"Gender"`
+	Status     *int    `xml:"Status"`
+	CreateTime int64   `xml:"CreateTime"`
 }
