@@ -1,18 +1,36 @@
 package cores
 
-import "net/http"
+import (
+	"log"
+	"net/http"
 
-func writeServerError(w http.ResponseWriter) {
+	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
+)
+
+func WriteServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	_, _ = w.Write([]byte("server error"))
 }
 
-type wxAppMsg struct {
-	ToUserName   string `xml:"ToUserName"`
-	FromUserName string `xml:"FromUserName"`
-	CreateTime   string `xml:"CreateTime"`
-	MsgType      string `xml:"MsgType"`
-	Content      string `xml:"Content"`
-	MsgId        string `xml:"MsgId"`
-	AgentID      string `xml:"AgentID"`
+func WXPong(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
+	sig := r.Form.Get("msg_signature")
+	timeStamp := r.Form.Get("timestamp")
+	nonce := r.Form.Get("nonce")
+	echo := r.Form.Get("echostr")
+
+	echoStr, cryptErr := wx.VerifyURL(sig, timeStamp, nonce, echo)
+	if cryptErr != nil {
+		log.Printf("verify error %+v", cryptErr)
+		WriteServerError(w)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(echoStr)
+}
+
+type AccessToken struct {
+	ErrCode     int    `json:"errcode"`
+	ErrMsg      string `json:"errmsg"`
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int    `json:"expires_in"`
 }

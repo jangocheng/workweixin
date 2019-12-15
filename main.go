@@ -4,10 +4,18 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/vnotes/workweixin_app/cores"
+	"github.com/vnotes/workweixin_app/cores/app"
+	"github.com/vnotes/workweixin_app/cores/contact"
+	_ "github.com/vnotes/workweixin_app/cores/dbs"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	r := cores.NewRouters()
+
+	var r = mux.NewRouter()
+
+	app.NewRouters(r)
+	contact.NewRouters(r)
 	log.Fatal(http.ListenAndServe(":11111", r))
 }
