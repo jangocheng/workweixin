@@ -47,11 +47,11 @@ func (u *UserClient) CreateUser(ctx context.Context, msg *wxContactMsg) error {
 }
 
 func (u *UserClient) UpdateUser(ctx context.Context, msg *wxContactMsg) error {
+	// new user id 无效，测试不可以更改
 	_sql := `
 		UPDATE
 			users
 		SET
-			user_id = ?,
 			user_name = ?,
 			gender = ?,
 			state = ?,
@@ -60,7 +60,7 @@ func (u *UserClient) UpdateUser(ctx context.Context, msg *wxContactMsg) error {
 			create_time = ?
 		WHERE
 			user_id = ?;`
-	_, err := u.db.ExecContext(ctx, _sql, msg.NewUserID, msg.Name, msg.Gender, msg.Status, msg.Email, msg.Mobile, msg.CreateTime, msg.UserID)
+	_, err := u.db.ExecContext(ctx, _sql, msg.Name, msg.Gender, msg.Status, msg.Email, msg.Mobile, msg.CreateTime, msg.UserID)
 	if err != nil {
 		log.Printf("update user(%s-%s) error %#v", msg.UserID, msg.Name, err)
 		return err
