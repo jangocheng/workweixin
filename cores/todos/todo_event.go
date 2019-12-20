@@ -3,7 +3,6 @@ package todos
 import (
 	"context"
 	"log"
-	"strconv"
 	"sync"
 
 	"github.com/vnotes/workweixin_app/cores/dbs"
@@ -13,10 +12,10 @@ import (
 
 type Todo interface {
 	Get(ctx context.Context, userID string) ([]*ToDoList, error)
-	Update(ctx context.Context, userID, content string) error
+	Update(ctx context.Context, userID, content string, todoID uint64) error
 	Create(ctx context.Context, userID, content string) error
-	Delete(ctx context.Context, userID, toDoID string) error
-	Done(ctx context.Context, userID, toDoID string) error
+	Delete(ctx context.Context, userID string, toDoID uint64) error
+	Done(ctx context.Context, userID string, toDoID uint64) error
 }
 
 var (
@@ -55,9 +54,9 @@ func (t *ToDoEvent) Get(ctx context.Context, userID string) ([]*ToDoList, error)
 	return result, nil
 }
 
-func (t *ToDoEvent) Update(ctx context.Context, userID, content string) error {
-	_sql := "UPDATE todo_list SET todo_name = ? WHERE user_id = ?;"
-	_, err := t.db.ExecContext(ctx, _sql, content, userID)
+func (t *ToDoEvent) Update(ctx context.Context, userID, content string, todoID uint64) error {
+	_sql := "UPDATE todo_list SET todo_name = ? WHERE user_id = ? AND id = ?;"
+	_, err := t.db.ExecContext(ctx, _sql, content, userID, todoID)
 	if err != nil {
 		log.Printf("update db error %#v", err)
 		return err
@@ -74,8 +73,7 @@ func (t *ToDoEvent) Create(ctx context.Context, userID, name string) error {
 	return nil
 }
 
-func (t *ToDoEvent) Delete(ctx context.Context, userID, todoIDStr string) error {
-	todoID, _ := strconv.ParseUint(todoIDStr, 10, 64)
+func (t *ToDoEvent) Delete(ctx context.Context, userID string, todoID uint64) error {
 	_sql := "DELETE FROM todo_list WHERE user_id = ? AND id = ?;"
 	_, err := t.db.ExecContext(ctx, _sql, userID, todoID)
 	if err != nil {
@@ -84,9 +82,8 @@ func (t *ToDoEvent) Delete(ctx context.Context, userID, todoIDStr string) error 
 	return nil
 }
 
-func (t *ToDoEvent) Done(ctx context.Context, userID, todoIDStr string) error {
-	todoID, _ := strconv.ParseUint(todoIDStr, 10, 64)
-	_sql := "UPDATE todo_list SET active = 0 WHERE user_id = ? AND id = ?;"
+func (t *ToDoEvent) Done(ctx context.Context, userID string, todoID uint64) error {
+	_sql := "UPDATE todo_list SET active = 1 WHERE user_id = ? AND id = ?;"
 	_, err := t.db.ExecContext(ctx, _sql, userID, todoID)
 	if err != nil {
 		return err

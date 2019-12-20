@@ -3,6 +3,8 @@ package todos
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -24,51 +26,74 @@ const HELP = `
 	更新todo: todo:update@<todo_id>|new_content
 `
 
-func ToDoCmd(ctx context.Context, cmd, userID, content string) string {
-	var (
-		meta string
-	)
+func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 	switch cmd {
 	case ToDoGet:
 		data, err := Cli().Get(ctx, userID)
 		if err != nil {
 			meta = "查询 TODO 任务发生错误：" + err.Error()
-		} else {
-			metaStr, err := json.Marshal(data)
-			if err != nil {
-				meta = "序列化数据出错： " + err.Error()
-			} else {
-				meta = string(metaStr)
-			}
+			return
 		}
+		metaStr, err := json.MarshalIndent(data, "", "    ")
+		if err != nil {
+			meta = "序列化数据出错： " + err.Error()
+			return
+		}
+		meta = "查询 TODO LIST 成功\n" + string(metaStr)
+		return
 	case ToDoADD:
 		err := Cli().Create(ctx, userID, content)
 		if err != nil {
 			meta = "添加TODO任务失败：" + err.Error()
-		} else {
-			meta = "添加TODO任务成功"
+			return
 		}
+		meta = "添加TODO任务成功"
+		return
 	case ToDoUpdate:
-		err := Cli().Update(ctx, userID, content)
+		text := strings.Split(content, "|")
+		if len(text) != 2 {
+			meta = "命令出错，请输入 HELP"
+			return
+		}
+		todoID, err := strconv.ParseUint(text[0], 10, 64)
+		if err != nil {
+			meta = "命令有误，请输入 HELP"
+			return
+		}
+		updateContent := text[1]
+		err = Cli().Update(ctx, userID, updateContent, todoID)
 		if err != nil {
 			meta = "更新TODO任务失败：" + err.Error()
-		} else {
-			meta = "更新TODO任务成功"
+			return
 		}
+		meta = "更新TODO任务成功"
+		return
 	case ToDoDEL:
-		err := Cli().Delete(ctx, userID, content)
+		todoID, err := strconv.ParseUint(content, 10, 64)
+		if err != nil {
+			meta = "命令有误，请输入 HELP"
+			return
+		}
+		err = Cli().Delete(ctx, userID, todoID)
 		if err != nil {
 			meta = "删除TODO任务失败：" + err.Error()
-		} else {
-			meta = "删除TODO任务成功"
+			return
 		}
+		meta = "删除TODO任务成功"
+		return
 	case ToDoDone:
-		err := Cli().Done(ctx, userID, content)
+		todoID, err := strconv.ParseUint(content, 10, 64)
+		if err != nil {
+			meta = "命令有误，请输入 HELP"
+			return
+		}
+		err = Cli().Done(ctx, userID, todoID)
 		if err != nil {
 			meta = "完成TODO任务失败：" + err.Error()
-		} else {
-			meta = "已经完成TODO任务"
+			return
 		}
+		meta = "已经完成TODO任务"
+		return
 	default:
 		meta = "命名格式有问题，请输入 HELP 查看帮助"
 	}
