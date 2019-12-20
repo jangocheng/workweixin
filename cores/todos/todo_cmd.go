@@ -16,14 +16,14 @@ const (
 )
 
 const HELP = `
-	todo 用法----- \n
-	通过查询 todo_list 获取 todo_id \n
+	-------- todo 用法 ----------
+	通过查询 todo_list 获取 todo_id
 	------------------------------
-	查询todo: todo:get@ \n
-	新建todo: todo:add@明年我要增高！ \n
-	完成todo: todo:done@<todo_id> \n
-	删除todo: todo:del@<todo_id> \n 
-	更新todo: todo:update@<todo_id>|new_content
+	查询todo: todo:get@
+	新建todo: todo:add@明年我要增高
+	完成todo: todo:done@<todo_id>
+	删除todo: todo:del@<todo_id>
+	更新todo: todo:update@<todo_id>|text
 `
 
 func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
