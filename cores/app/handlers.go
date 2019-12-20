@@ -5,8 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/vnotes/workweixin_app/cores"
+	"github.com/vnotes/workweixin_app/cores/todos"
 
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
@@ -52,14 +54,37 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		cores.WriteServerError(w)
 		return
 	}
+	log.Printf("app receive data %s", string(msg))
+
 	message, err := getWXAppMsg(msg)
 	if err != nil {
 		log.Printf("msg %s unmarshal error %#v", string(msg), err)
 		cores.WriteServerError(w)
 		return
 	}
-	rspMsg := "auto-reply-source-message:\n" + message.Content
-	replyMsgRsp := &wxAppMsg{
+
+	var rspMsg string
+
+	rawMsg := message.Content
+	if rawMsg == "HELP" {
+		rspMsg = todos.HELP
+	} else {
+		if strings.HasPrefix(rawMsg, "todo:") && strings.Contains(rawMsg, "@") {
+			var (
+				content = strings.Split(message.Content, "@")
+				cmd     = content[0]
+				userID  = message.FromUserName
+				text    = content[1]
+			)
+			rspMsg = todos.ToDoCmd(r.Context(), cmd, userID, text)
+		}
+	}
+
+	if rspMsg == "" {
+		return
+	}
+
+	replyMsgRsp := &WXAppMsg{
 		ToUserName:   message.ToUserName,
 		FromUserName: message.FromUserName,
 		CreateTime:   message.CreateTime,
@@ -84,15 +109,15 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 	_, _ = w.Write(rsp)
 }
 
-func getWXAppMsg(msg []byte) (*wxAppMsg, error) {
-	data := &wxAppMsg{}
+func getWXAppMsg(msg []byte) (*WXAppMsg, error) {
+	data := &WXAppMsg{}
 	if err := xml.Unmarshal(msg, data); err != nil {
 		return nil, err
 	}
 	return data, nil
 }
 
-type wxAppMsg struct {
+type WXAppMsg struct {
 	ToUserName   string `xml:"ToUserName"`
 	FromUserName string `xml:"FromUserName"`
 	CreateTime   string `xml:"CreateTime"`
