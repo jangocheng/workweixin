@@ -9,16 +9,13 @@ import (
 	"github.com/vnotes/workweixin_app/cores/app"
 )
 
-type Notifier interface {
-	AppMsgPush()
-}
-
-type appMsgReq struct {
+type appMsgData struct {
 	ToUser  string     `json:"touser"`
 	MsgType string     `json:"msgtype"`
 	AgentID int64      `json:"agentid"`
 	Text    MsgContent `json:"text"`
 }
+
 type MsgContent struct {
 	Content string `json:"content"`
 }
@@ -35,11 +32,11 @@ func AppMsgPush() {
 	}
 
 	uri := "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + token
-	pushData := &appMsgReq{
+	pushData := &appMsgData{
 		ToUser:  "zaizai",
 		MsgType: "text",
 		AgentID: agentID,
-		Text:    MsgContent{Content: "text"},
+		Text:    MsgContent{Content: "别玩手机啦，赶紧睡觉哈...😄"},
 	}
 	body, err := json.Marshal(pushData)
 	if err != nil {
