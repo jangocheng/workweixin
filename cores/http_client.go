@@ -38,7 +38,7 @@ func (c *HttpClient) HttpDo(v interface{}) error {
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(body, v); err != nil {
+	if err = json.Unmarshal(body, v); err != nil {
 		return err
 	}
 	return nil

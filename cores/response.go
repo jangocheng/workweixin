@@ -28,9 +28,7 @@ func WXPong(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCr
 	_, _ = w.Write(echoStr)
 }
 
-type AccessToken struct {
-	ErrCode     int    `json:"errcode"`
-	ErrMsg      string `json:"errmsg"`
-	AccessToken string `json:"access_token"`
-	ExpiresIn   int    `json:"expires_in"`
+type Response struct {
+	ErrCode int
+	ErrMsg  string
 }
