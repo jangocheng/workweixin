@@ -1,5 +1,8 @@
 FROM golang:1.13
 
+ENV TZ Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENV GO111MODULE on
 
 WORKDIR /srv
