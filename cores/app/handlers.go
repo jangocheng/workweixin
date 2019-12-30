@@ -76,7 +76,11 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 				userID  = message.FromUserName
 				text    = content[1]
 			)
-			rspMsg = todos.ToDoCmd(r.Context(), cmd, userID, text)
+			if true {
+				rspMsg = todos.ToDoCmdRPC(r.Context(), cmd, userID, text)
+			} else {
+				rspMsg = todos.ToDoCmd(r.Context(), cmd, userID, text)
+			}
 		}
 	}
 
