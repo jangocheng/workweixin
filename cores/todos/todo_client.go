@@ -1,8 +1,9 @@
 package todos
 
 import (
-	"google.golang.org/grpc"
 	"log"
+
+	"google.golang.org/grpc"
 )
 
 var (
