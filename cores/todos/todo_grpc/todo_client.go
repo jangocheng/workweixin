@@ -1,4 +1,4 @@
-package todos
+package todo_grpc
 
 import (
 	"log"

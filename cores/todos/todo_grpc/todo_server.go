@@ -1,4 +1,4 @@
-package todos
+package todo_grpc
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/vnotes/workweixin_app/cores/dbs"
+	"github.com/vnotes/workweixin_app/cores/todos"
 
 	"google.golang.org/grpc"
 )
@@ -19,7 +20,7 @@ type server struct {
 }
 
 func (s *server) Select(ctx context.Context, in *ToDoRequest) (*ToDoResponse, error) {
-	todoList := make([]*ToDoList, 0)
+	todoList := make([]*todos.ToDoList, 0)
 	querySQL := "SELECT id, todo_name, create_time, finish_time, active FROM todo_list WHERE user_id = ?;"
 	if err := dbs.DBCli().SelectContext(ctx, &todoList, querySQL, in.UserID); err != nil {
 		return nil, err

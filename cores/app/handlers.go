@@ -9,6 +9,7 @@ import (
 
 	"github.com/vnotes/workweixin_app/cores"
 	"github.com/vnotes/workweixin_app/cores/todos"
+	"github.com/vnotes/workweixin_app/cores/todos/todo_grpc"
 
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
@@ -77,7 +78,7 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 				text    = content[1]
 			)
 			if true {
-				rspMsg = todos.ToDoCmdRPC(r.Context(), cmd, userID, text)
+				rspMsg = todo_grpc.ToDoCmdRPC(r.Context(), cmd, userID, text)
 			} else {
 				rspMsg = todos.ToDoCmd(r.Context(), cmd, userID, text)
 			}

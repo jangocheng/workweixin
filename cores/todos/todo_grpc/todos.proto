@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package todos;
+package todo_grpc;
 
 
 service ToDoCmd {
