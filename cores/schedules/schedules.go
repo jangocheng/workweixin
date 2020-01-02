@@ -5,7 +5,8 @@ import (
 	"github.com/vnotes/workweixin_app/cores/notifications"
 )
 
-func RegisterCronJob(c *cron.Cron) {
+func RegisterCronJob() {
+	var c = cron.New()
 	_, _ = c.AddFunc("0 1 * * *", func() {
 		notifications.AppMsgPush()
 	})
