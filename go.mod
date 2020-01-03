@@ -1,6 +1,6 @@
-module github.com/vnotes/workweixin_app
+module github.com/vnotes/workweixin
 
-go 1.12
+go 1.13
 
 require (
 	github.com/go-sql-driver/mysql v1.4.1-0.20191212001955-b66d043e6c89
