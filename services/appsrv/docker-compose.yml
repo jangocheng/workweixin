@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   weixin_app:
-    build: .
+    image: weixin
     environment:
       - CorPID=${CorPID}
       - AgentID=${AgentID}

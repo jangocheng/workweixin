@@ -1,1 +1,1 @@
-docker-compose down && docker-compose build && docker-compose up -d && docker-compose logs -f
+docker build . -t weixin

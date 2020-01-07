@@ -8,7 +8,7 @@ import (
 var DB *sqlx.DB
 
 func init() {
-	DB = sqlx.MustConnect("mysql", "notes:notes@tcp(localhost:3306)/weixin")
+	DB = sqlx.MustConnect("mysql", "notes:notes@tcp(mysql_db:3306)/weixin")
 }
 
 func Cli() *sqlx.DB {
