@@ -1,8 +1,10 @@
 package todos
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/vnotes/workweixin/services/appsrv/conf"
 	"github.com/vnotes/workweixin/services/cores/grpc/todo"
 
 	"google.golang.org/grpc"
@@ -32,11 +34,8 @@ var (
 	ToDoConn *grpc.ClientConn
 )
 
-const (
-	address = "weixin_todo:11112"
-)
-
-func init() {
+func InitToDoGRPC() {
+	address := fmt.Sprintf("%s:11112", conf.Conf.ToDoNetWork)
 	ToDoConn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("don't connect: %v", err)

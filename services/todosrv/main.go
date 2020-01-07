@@ -6,7 +6,8 @@ import (
 
 	"github.com/vnotes/workweixin/services/cores/grpc/todo"
 	"github.com/vnotes/workweixin/services/todosrv/apis"
-	_ "github.com/vnotes/workweixin/services/todosrv/dbs"
+	"github.com/vnotes/workweixin/services/todosrv/conf"
+	"github.com/vnotes/workweixin/services/todosrv/dbs"
 
 	"google.golang.org/grpc"
 )
@@ -16,6 +17,9 @@ const (
 )
 
 func main() {
+	conf.InitConfig()
+	dbs.InitMySQL()
+
 	log.Print("listening rpc port 11112")
 
 	lis, err := net.Listen("tcp", rpcPort)

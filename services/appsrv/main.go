@@ -5,16 +5,19 @@ import (
 	"net/http"
 
 	"github.com/vnotes/workweixin/services/appsrv/apis"
-	_ "github.com/vnotes/workweixin/services/appsrv/apis/todos"
-	_ "github.com/vnotes/workweixin/services/appsrv/conf"
-	_ "github.com/vnotes/workweixin/services/appsrv/dbs"
+	"github.com/vnotes/workweixin/services/appsrv/apis/todos"
+	"github.com/vnotes/workweixin/services/appsrv/conf"
+	"github.com/vnotes/workweixin/services/appsrv/dbs"
 	_ "github.com/vnotes/workweixin/services/appsrv/schedules"
 
 	"github.com/gorilla/mux"
 )
 
-// todo gracefully shutdown and more
 func main() {
+	conf.InitConfig()
+	todos.InitToDoGRPC()
+	dbs.InitMySQL()
+
 	var r = mux.NewRouter()
 	apis.NewRouters(r)
 

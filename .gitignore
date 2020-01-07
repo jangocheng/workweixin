@@ -19,4 +19,5 @@
 .idea/
 data/
 bin/
+local.yaml
 databases/data
