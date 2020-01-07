@@ -1,0 +1,13 @@
+version: '3.5'
+services:
+  weixin_todo:
+    image: weixin
+    command: ./bin/todosrv
+    container_name: weixin_todo
+    ports:
+      - "11112:11112"
+
+networks:
+  default:
+    external:
+      name: weixin_net

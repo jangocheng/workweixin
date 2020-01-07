@@ -8,9 +8,7 @@ services:
       - AppToken=${AppToken}
       - AppSecret=${AppSecret}
       - AppAesKey=${AppAesKey}
-      - ContactSecret=${ContactSecret}
-      - ContactToken=${ContactToken}
-      - ContactAesKey=${ContactAesKey}
+    command: ./bin/appsrv
     container_name: weixin_app
     ports:
       - "11111:11111"

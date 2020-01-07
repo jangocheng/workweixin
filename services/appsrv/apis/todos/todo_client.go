@@ -33,7 +33,7 @@ var (
 )
 
 const (
-	address = "localhost:11112"
+	address = "weixin_todo:11112"
 )
 
 func init() {
