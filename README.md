@@ -1,4 +1,5 @@
 # workweixin
+
 企业微信开发
 
 查看所有的 `tag`, `git tag -l` 
@@ -11,8 +12,18 @@
 
 `git checkout v0.4` 增加定时任务。
 
+`git checkout v0.5` 启用 GRPC
+
+`git checkout v0.6` 微服务拆分已经项目结构重构
+
 程序运行：
 
-1.  `./init.sh` 建立docker网络
-2. `cd cores/dbs && docker-compose up -d` 运行 `MySQL` 服务.
-3. `./run.sh` 运行企业应用服务.
+1. `cd databases/  && ./init.sh && docker-compose up -d` 建立docker网络，启动 MySQL 服务
+
+2. `./run.sh` 构建基础镜像
+
+3. `make todosrv action=up ` 启动 `todosrv` ，需要第一个启动
+
+4. `make appsrv action=up` 启动 `appsrv`, 开启 微信企业应用服务
+
+5. `make contactsrv action=up` 开启 `contactsrv` 通信录管理服务
