@@ -36,7 +36,8 @@ var (
 
 func InitToDoGRPC() {
 	address := fmt.Sprintf("%s:11112", conf.Conf.ToDoNetWork)
-	ToDoConn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	var err error
+	ToDoConn, err = grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("don't connect: %v", err)
 	}

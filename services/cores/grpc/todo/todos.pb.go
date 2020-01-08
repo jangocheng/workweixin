@@ -189,32 +189,67 @@ func (m *ToDoResponse) GetResult() []*ToDoResult {
 	return nil
 }
 
+type Empty struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Empty) Reset()         { *m = Empty{} }
+func (m *Empty) String() string { return proto.CompactTextString(m) }
+func (*Empty) ProtoMessage()    {}
+func (*Empty) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a7703e18c08e8710, []int{3}
+}
+
+func (m *Empty) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Empty.Unmarshal(m, b)
+}
+func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+}
+func (m *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(m, src)
+}
+func (m *Empty) XXX_Size() int {
+	return xxx_messageInfo_Empty.Size(m)
+}
+func (m *Empty) XXX_DiscardUnknown() {
+	xxx_messageInfo_Empty.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Empty proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*ToDoRequest)(nil), "todo.ToDoRequest")
 	proto.RegisterType((*ToDoResult)(nil), "todo.ToDoResult")
 	proto.RegisterType((*ToDoResponse)(nil), "todo.ToDoResponse")
+	proto.RegisterType((*Empty)(nil), "todo.Empty")
 }
 
 func init() { proto.RegisterFile("todos.proto", fileDescriptor_a7703e18c08e8710) }
 
 var fileDescriptor_a7703e18c08e8710 = []byte{
-	// 255 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0x31, 0x4f, 0xc3, 0x30,
-	0x14, 0x84, 0x71, 0x6a, 0x52, 0xfa, 0x82, 0x10, 0xbc, 0x01, 0x59, 0x0c, 0x28, 0xca, 0xe4, 0x29,
-	0x12, 0x65, 0x61, 0x60, 0x41, 0x89, 0x90, 0xb2, 0x30, 0x98, 0x22, 0xe6, 0xd2, 0x3e, 0x89, 0x48,
-	0x4d, 0x5c, 0xe2, 0x57, 0x7e, 0x03, 0x3f, 0x1b, 0xd9, 0x31, 0x6a, 0xd8, 0x7c, 0x77, 0xf6, 0xe7,
-	0xd3, 0x41, 0xc6, 0x76, 0x6b, 0x5d, 0xb9, 0x1f, 0x2c, 0x5b, 0x94, 0x5e, 0x14, 0xef, 0x90, 0xad,
-	0x6c, 0x6d, 0x0d, 0x7d, 0x1d, 0xc8, 0x31, 0x5e, 0x43, 0xfa, 0xe6, 0x68, 0x68, 0x6a, 0x25, 0x72,
-	0xa1, 0x17, 0x26, 0x2a, 0x54, 0x30, 0xaf, 0x6c, 0xcf, 0xd4, 0xb3, 0x4a, 0x42, 0xf0, 0x27, 0xfd,
-	0x0b, 0x0f, 0x68, 0x6a, 0x35, 0xcb, 0x85, 0x96, 0x26, 0xaa, 0xe2, 0x47, 0x00, 0x8c, 0x64, 0x77,
-	0xd8, 0x31, 0x5e, 0x40, 0x12, 0xa1, 0xd2, 0x24, 0x4d, 0x8d, 0x08, 0xf2, 0x65, 0xdd, 0x51, 0xa4,
-	0x85, 0x33, 0xde, 0x02, 0x54, 0x03, 0xad, 0x99, 0x56, 0x6d, 0x47, 0x01, 0xb7, 0x30, 0x13, 0xc7,
-	0xe7, 0xcf, 0x6d, 0xdf, 0xba, 0xcf, 0x90, 0xcb, 0x31, 0x3f, 0x3a, 0xbe, 0xca, 0xd3, 0x86, 0xdb,
-	0x6f, 0x52, 0xa7, 0xb9, 0xd0, 0x67, 0x26, 0xaa, 0xe2, 0x01, 0xce, 0x63, 0x93, 0xbd, 0xed, 0x1d,
-	0xa1, 0x86, 0x74, 0x6c, 0xa5, 0x44, 0x3e, 0xd3, 0xd9, 0xf2, 0xb2, 0xf4, 0x53, 0x94, 0xc7, 0xb6,
-	0x26, 0xe6, 0xcb, 0x47, 0x98, 0x7b, 0xb7, 0xea, 0xb6, 0x78, 0x07, 0xe9, 0x2b, 0xed, 0x68, 0xc3,
-	0x78, 0x35, 0xbd, 0x1e, 0x66, 0xbb, 0xc1, 0x7f, 0x84, 0xf0, 0x4b, 0x71, 0xf2, 0x91, 0x86, 0xa1,
-	0xef, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x0f, 0x6b, 0xbf, 0x8b, 0x77, 0x01, 0x00, 0x00,
+	// 299 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xbf, 0x4a, 0x03, 0x41,
+	0x10, 0xc6, 0xdd, 0x64, 0x73, 0x31, 0x73, 0x22, 0x3a, 0x85, 0x2c, 0x16, 0x72, 0x5c, 0xb5, 0x58,
+	0x04, 0x8c, 0x8d, 0xad, 0x64, 0x15, 0xd2, 0x58, 0xac, 0x09, 0xd6, 0x31, 0x19, 0xf0, 0x20, 0x77,
+	0x7b, 0x66, 0x37, 0x82, 0x6f, 0xe0, 0xb3, 0xfa, 0x14, 0xb2, 0x7f, 0x24, 0x11, 0x2c, 0xae, 0xbb,
+	0x6f, 0xbe, 0x99, 0xdf, 0x7c, 0x37, 0x2c, 0xe4, 0xce, 0xac, 0x8d, 0x1d, 0xb7, 0x5b, 0xe3, 0x0c,
+	0x72, 0x2f, 0xca, 0x17, 0xc8, 0xe7, 0x46, 0x19, 0x4d, 0xef, 0x3b, 0xb2, 0x0e, 0x2f, 0x20, 0x5b,
+	0x58, 0xda, 0xce, 0x94, 0x60, 0x05, 0x93, 0x23, 0x9d, 0x14, 0x0a, 0x18, 0x4e, 0x4d, 0xe3, 0xa8,
+	0x71, 0xa2, 0x17, 0x8c, 0x5f, 0xe9, 0x27, 0x3c, 0x60, 0xa6, 0x44, 0xbf, 0x60, 0x92, 0xeb, 0xa4,
+	0xca, 0x2f, 0x06, 0x10, 0xc9, 0x76, 0xb7, 0x71, 0x78, 0x0a, 0xbd, 0x04, 0xe5, 0xba, 0x37, 0x53,
+	0x88, 0xc0, 0x9f, 0x96, 0x35, 0x25, 0x5a, 0xf8, 0xc6, 0x2b, 0x80, 0xe9, 0x96, 0x96, 0x8e, 0xe6,
+	0x55, 0x4d, 0x01, 0x37, 0xd2, 0x07, 0x15, 0xef, 0x3f, 0x56, 0x4d, 0x65, 0xdf, 0x82, 0xcf, 0xa3,
+	0xbf, 0xaf, 0xf8, 0x28, 0xf7, 0x2b, 0x57, 0x7d, 0x90, 0x18, 0x14, 0x4c, 0x1e, 0xeb, 0xa4, 0xca,
+	0x3b, 0x38, 0x49, 0x49, 0x5a, 0xd3, 0x58, 0x42, 0x09, 0x59, 0x4c, 0x25, 0x58, 0xd1, 0x97, 0xf9,
+	0xe4, 0x6c, 0xec, 0x4f, 0x31, 0xde, 0xa7, 0xd5, 0xc9, 0x2f, 0x87, 0x30, 0x78, 0xa8, 0x5b, 0xf7,
+	0x39, 0xf9, 0x66, 0x30, 0xf4, 0xfe, 0xb4, 0x5e, 0xe3, 0x0d, 0x64, 0xcf, 0xb4, 0xa1, 0x95, 0xc3,
+	0xf3, 0xc3, 0xc1, 0x70, 0xc0, 0x4b, 0xfc, 0xc3, 0x0a, 0xfb, 0xca, 0x23, 0xbc, 0x86, 0x2c, 0xfe,
+	0xc7, 0x7f, 0x23, 0x79, 0x2c, 0x85, 0x45, 0xb1, 0x57, 0xd1, 0x86, 0x3a, 0xf5, 0x4a, 0xe0, 0xca,
+	0x34, 0x1d, 0xa9, 0x8b, 0x76, 0xdd, 0x29, 0xc1, 0x6b, 0x16, 0x1e, 0xc8, 0xed, 0x4f, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x61, 0x8a, 0xe6, 0xfa, 0x2f, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -230,6 +265,10 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ToDoCmdClient interface {
 	Select(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*ToDoResponse, error)
+	Create(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error)
+	Delete(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error)
+	Done(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error)
+	Update(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type toDoCmdClient struct {
@@ -249,9 +288,49 @@ func (c *toDoCmdClient) Select(ctx context.Context, in *ToDoRequest, opts ...grp
 	return out, nil
 }
 
+func (c *toDoCmdClient) Create(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/todo.ToDoCmd/Create", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toDoCmdClient) Delete(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/todo.ToDoCmd/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toDoCmdClient) Done(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/todo.ToDoCmd/Done", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toDoCmdClient) Update(ctx context.Context, in *ToDoRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/todo.ToDoCmd/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ToDoCmdServer is the server API for ToDoCmd service.
 type ToDoCmdServer interface {
 	Select(context.Context, *ToDoRequest) (*ToDoResponse, error)
+	Create(context.Context, *ToDoRequest) (*Empty, error)
+	Delete(context.Context, *ToDoRequest) (*Empty, error)
+	Done(context.Context, *ToDoRequest) (*Empty, error)
+	Update(context.Context, *ToDoRequest) (*Empty, error)
 }
 
 // UnimplementedToDoCmdServer can be embedded to have forward compatible implementations.
@@ -260,6 +339,18 @@ type UnimplementedToDoCmdServer struct {
 
 func (*UnimplementedToDoCmdServer) Select(ctx context.Context, req *ToDoRequest) (*ToDoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Select not implemented")
+}
+func (*UnimplementedToDoCmdServer) Create(ctx context.Context, req *ToDoRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (*UnimplementedToDoCmdServer) Delete(ctx context.Context, req *ToDoRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (*UnimplementedToDoCmdServer) Done(ctx context.Context, req *ToDoRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Done not implemented")
+}
+func (*UnimplementedToDoCmdServer) Update(ctx context.Context, req *ToDoRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 
 func RegisterToDoCmdServer(s *grpc.Server, srv ToDoCmdServer) {
@@ -284,6 +375,78 @@ func _ToDoCmd_Select_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ToDoCmd_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToDoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToDoCmdServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/todo.ToDoCmd/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToDoCmdServer).Create(ctx, req.(*ToDoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToDoCmd_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToDoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToDoCmdServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/todo.ToDoCmd/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToDoCmdServer).Delete(ctx, req.(*ToDoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToDoCmd_Done_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToDoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToDoCmdServer).Done(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/todo.ToDoCmd/Done",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToDoCmdServer).Done(ctx, req.(*ToDoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToDoCmd_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToDoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToDoCmdServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/todo.ToDoCmd/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToDoCmdServer).Update(ctx, req.(*ToDoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ToDoCmd_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "todo.ToDoCmd",
 	HandlerType: (*ToDoCmdServer)(nil),
@@ -291,6 +454,22 @@ var _ToDoCmd_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Select",
 			Handler:    _ToDoCmd_Select_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _ToDoCmd_Create_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _ToDoCmd_Delete_Handler,
+		},
+		{
+			MethodName: "Done",
+			Handler:    _ToDoCmd_Done_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _ToDoCmd_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

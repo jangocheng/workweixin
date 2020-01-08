@@ -3,8 +3,11 @@ syntax = "proto3";
 package todo;
 
 service ToDoCmd {
-    rpc Select (ToDoRequest) returns (ToDoResponse) {
-    }
+    rpc Select (ToDoRequest) returns (ToDoResponse) {}
+    rpc Create (ToDoRequest) returns (Empty) {}
+    rpc Delete (ToDoRequest) returns (Empty) {}
+    rpc Done (ToDoRequest) returns (Empty) {}
+    rpc Update (ToDoRequest) returns (Empty) {}
 }
 
 message ToDoRequest {
@@ -24,4 +27,8 @@ message ToDoResult {
 
 message ToDoResponse {
     repeated ToDoResult Result = 1;
+}
+
+message Empty {
+
 }
