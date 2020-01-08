@@ -1,5 +1,5 @@
-# workweixin_app
-企业微信应用开发
+# workweixin
+企业微信开发
 
 查看所有的 `tag`, `git tag -l` 
 

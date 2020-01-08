@@ -1,0 +1,18 @@
+version: '3.5'
+services:
+  weixin_contact:
+    image: weixin
+    environment:
+      - CorPID=${CorPID}
+      - ContactSecret=${ContactSecret}
+      - ContactToken=${ContactToken}
+      - ContactAesKey=${ContactAesKey}
+    command: ./bin/contactsrv
+    container_name: weixin_contact
+    ports:
+      - "11110:11110"
+
+networks:
+  default:
+    external:
+      name: weixin_net

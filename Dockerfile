@@ -15,6 +15,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -ldflags="-s -w" -o main main.go
-
-CMD ["./main"]
+RUN go build -ldflags="-s -w" -o ./bin/appsrv services/appsrv/main.go \
+    && go build -ldflags="-s -w" -o ./bin/contactsrv services/contactsrv/main.go \
+    && go build -ldflags="-s -w" -o ./bin/todosrv services/todosrv/main.go

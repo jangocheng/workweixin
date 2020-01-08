@@ -18,6 +18,6 @@
 
 .idea/
 data/
-# 编译文件
-main
-workweixin_app
+bin/
+local.yaml
+databases/data

@@ -1,0 +1,19 @@
+version: '3.5'
+services:
+  weixin_app:
+    image: weixin
+    environment:
+      - CorPID=${CorPID}
+      - AgentID=${AgentID}
+      - AppToken=${AppToken}
+      - AppSecret=${AppSecret}
+      - AppAesKey=${AppAesKey}
+    command: ./bin/appsrv
+    container_name: weixin_app
+    ports:
+      - "11111:11111"
+
+networks:
+  default:
+    external:
+      name: weixin_net

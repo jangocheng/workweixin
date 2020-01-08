@@ -1,0 +1,2 @@
+db_network: mysql_db
+todo_network: weixin_todo

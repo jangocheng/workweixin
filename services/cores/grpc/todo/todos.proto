@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package todo;
+
+service ToDoCmd {
+    rpc Select (ToDoRequest) returns (ToDoResponse) {}
+    rpc Create (ToDoRequest) returns (Empty) {}
+    rpc Delete (ToDoRequest) returns (Empty) {}
+    rpc Done (ToDoRequest) returns (Empty) {}
+    rpc Update (ToDoRequest) returns (Empty) {}
+}
+
+message ToDoRequest {
+    string UserID = 1;
+    string Content = 2;
+    uint64 ToDoID = 3;
+}
+
+message ToDoResult {
+    uint64 ID = 1;
+    string Name = 2;
+    string CreateTime = 3;
+    string FinishTime = 4;
+    bool Active = 5;
+}
+
+
+message ToDoResponse {
+    repeated ToDoResult Result = 1;
+}
+
+message Empty {
+
+}
