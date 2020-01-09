@@ -14,6 +14,16 @@ import (
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
+func getWeiXinCrypto() *wxbizmsgcrypt.WXBizMsgCrypt {
+	receiverID := conf.Conf.CorPID
+
+	token := conf.Conf.Token
+	aesKey := conf.Conf.AesKey
+
+	wxCpt := wxbizmsgcrypt.NewWXBizMsgCrypt(token, aesKey, receiverID, wxbizmsgcrypt.XmlType)
+	return wxCpt
+}
+
 func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Printf("parse form error %s", err)
@@ -21,12 +31,7 @@ func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	receiverID := conf.Conf.CorPID
-
-	token := conf.Conf.Token
-	aesKey := conf.Conf.AesKey
-
-	wxCpt := wxbizmsgcrypt.NewWXBizMsgCrypt(token, aesKey, receiverID, wxbizmsgcrypt.XmlType)
+	wxCpt := getWeiXinCrypto()
 
 	switch r.Method {
 	case http.MethodGet:
