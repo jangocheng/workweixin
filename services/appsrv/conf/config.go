@@ -14,6 +14,7 @@ var Conf *Config
 type Config struct {
 	SecretConf
 	DBNetWork   string `yaml:"db_network"`
+	RedisWork   string `yaml:"redis_network"`
 	ToDoNetWork string `yaml:"todo_network"`
 }
 
@@ -53,7 +54,6 @@ func InitConfig() {
 
 	defaultFile = &productFile
 
-
 	configFile := flag.String("c", "product.yaml", "config file")
 	flag.Parse()
 
@@ -68,7 +68,7 @@ func InitConfig() {
 	if err := yaml.Unmarshal(data, Conf); err != nil {
 		log.Fatalf("unmarshal config file error %#v", err)
 	}
-	if Conf.DBNetWork == "" || Conf.ToDoNetWork == "" {
+	if Conf.DBNetWork == "" || Conf.ToDoNetWork == "" || Conf.RedisWork == ""{
 		log.Fatal("config data is invalid")
 	}
 }

@@ -3,6 +3,7 @@ package todos
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"strconv"
 	"strings"
 
@@ -32,6 +33,38 @@ func foldToResultList(response *todo.ToDoResponse) []*ToDoList {
 	return rsp
 }
 
+func queryToDoList(ctx context.Context, req *todo.ToDoRequest) (string, error) {
+	// 从缓存查询
+	var isFound bool
+	val, err := getToDoListByCache()
+	if err == nil && val == "" {
+		log.Println("从缓存查找 ToDoList 成功")
+		isFound = true
+	}
+	if isFound {
+		return val, nil
+	}
+
+	// 从数据库查询
+	rsp, err := ToDoCli.Select(ctx, req)
+	if err != nil {
+		return "", err
+	}
+	data := foldToResultList(rsp)
+
+	meta, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		return "", err
+	}
+
+	// 缓存数据
+	result := string(meta)
+	if err := CacheToDoList(result); err != nil {
+		log.Printf("cache todo list error %#v", err)
+	}
+	return result, nil
+}
+
 func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 	req := &todo.ToDoRequest{
 		UserID:  userID,
@@ -40,20 +73,13 @@ func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 	}
 	switch cmd {
 	case ToDoGet:
-		rsp, err := ToDoCli.Select(ctx, req)
+		data, err := queryToDoList(ctx, req)
 		if err != nil {
-			meta = "查询 TODO 任务发生错误：" + err.Error()
-			return
+			log.Printf("query todo list error %#v", err)
+			meta = "查询ToDoList失败 " + err.Error()
+			return meta
 		}
-
-		data := foldToResultList(rsp)
-
-		metaStr, err := json.MarshalIndent(data, "", "    ")
-		if err != nil {
-			meta = "序列化数据出错： " + err.Error()
-			return
-		}
-		meta = "查询 TODO LIST 成功\n" + string(metaStr)
+		meta = "查询 TODO LIST 成功\n" + data
 		return
 	case ToDoUpdate:
 		text := strings.Split(content, "|")
