@@ -45,7 +45,12 @@ func WXContactAutoMated(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		cores.WXPong(w, reqParam, wxCpt)
+		rsp, err := cores.WXPong(reqParam, wxCpt)
+		if err != nil {
+			cores.WriteServerError(w)
+			return
+		}
+		cores.WriteServerSuccess(w, rsp)
 	case http.MethodPost:
 		WXContactManager(w, r, wxCpt)
 	default:

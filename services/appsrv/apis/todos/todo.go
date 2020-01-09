@@ -3,8 +3,11 @@ package todos
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"strconv"
 	"strings"
+
+	"github.com/vnotes/workweixin/utils"
 
 	"github.com/vnotes/workweixin/services/cores/grpc/todo"
 )
@@ -32,30 +35,57 @@ func foldToResultList(response *todo.ToDoResponse) []*ToDoList {
 	return rsp
 }
 
+func queryToDoList(ctx context.Context, req *todo.ToDoRequest) (string, error) {
+	// 从缓存查询
+	var isFound bool
+	val, err := getToDoListByCache()
+	if err == nil && val != "" {
+		log.Println("从缓存查找 ToDoList 成功")
+		isFound = true
+	}
+	if isFound {
+		return val, nil
+	}
+
+	// 从数据库查询
+	rsp, err := ToDoCli.Select(ctx, req)
+	if err != nil {
+		return "", err
+	}
+	data := foldToResultList(rsp)
+
+	meta, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		return "", err
+	}
+
+	// 缓存数据
+	result := string(meta)
+	if err := CacheToDoList(result); err != nil {
+		log.Printf("cache todo list error %#v", err)
+	}
+	return result, nil
+}
+
 func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 	req := &todo.ToDoRequest{
 		UserID:  userID,
 		Content: content,
 		ToDoID:  0,
 	}
+	cmd = utils.ReplaceString(cmd, []string{" ", "\n"})
 	switch cmd {
 	case ToDoGet:
-		rsp, err := ToDoCli.Select(ctx, req)
+		data, err := queryToDoList(ctx, req)
 		if err != nil {
-			meta = "查询 TODO 任务发生错误：" + err.Error()
-			return
+			log.Printf("query todo list error %#v", err)
+			meta = "查询ToDoList失败 " + err.Error()
+			return meta
 		}
-
-		data := foldToResultList(rsp)
-
-		metaStr, err := json.MarshalIndent(data, "", "    ")
-		if err != nil {
-			meta = "序列化数据出错： " + err.Error()
-			return
-		}
-		meta = "查询 TODO LIST 成功\n" + string(metaStr)
+		meta = "查询 TODO LIST 成功\n" + data
 		return
 	case ToDoUpdate:
+		_ = DelToDoList()
 		text := strings.Split(content, "|")
 		if len(text) != 2 {
 			meta = "命令出错，请输入 HELP"
@@ -76,6 +106,7 @@ func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 		meta = "更新TODO任务成功"
 		return
 	case ToDoDone:
+		_ = DelToDoList()
 		todoID, err := strconv.ParseUint(content, 10, 64)
 		if err != nil {
 			meta = "命令有误，请输入 HELP"
@@ -90,6 +121,7 @@ func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 		meta = "已经完成TODO任务"
 		return
 	case ToDoDEL:
+		_ = DelToDoList()
 		todoID, err := strconv.ParseUint(content, 10, 64)
 		if err != nil {
 			meta = "命令有误，请输入 HELP"
@@ -104,6 +136,7 @@ func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 		meta = "删除TODO任务成功"
 		return
 	case ToDoADD:
+		_ = DelToDoList()
 		_, err := ToDoCli.Create(ctx, req)
 		if err != nil {
 			meta = "添加TODO任务失败：" + err.Error()

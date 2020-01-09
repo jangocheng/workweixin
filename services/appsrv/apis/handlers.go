@@ -12,6 +12,7 @@ import (
 	"github.com/vnotes/workweixin/services/appsrv/apis/todos"
 	"github.com/vnotes/workweixin/services/appsrv/conf"
 	"github.com/vnotes/workweixin/services/cores"
+	"github.com/vnotes/workweixin/utils"
 
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
@@ -54,7 +55,12 @@ func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		cores.WXPong(w, reqParam, wxCpt)
+		rsp, err := cores.WXPong(reqParam, wxCpt)
+		if err != nil {
+			cores.WriteServerError(w)
+			return
+		}
+		cores.WriteServerSuccess(w, rsp)
 	case http.MethodPost:
 		message, err := decodeWeiXinMsg(r, wxCpt, reqParam)
 		if err != nil {
@@ -79,11 +85,20 @@ func decodeWeiXinMsg(r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt, ping *cor
 		log.Printf("server read body error %#v", err)
 		return nil, err
 	}
-	msg, cryptErr := wx.DecryptMsg(ping.MsgSignature, ping.TimeStamp, ping.Nonce, body)
-	if cryptErr != nil {
-		log.Printf("decode error %#v", cryptErr)
-		return nil, errors.New("decode message error")
+	var (
+		msg      []byte
+		cryptErr *wxbizmsgcrypt.CryptError
+	)
+	if conf.Conf.ISDebug {
+		msg = body
+	} else {
+		msg, cryptErr = wx.DecryptMsg(ping.MsgSignature, ping.TimeStamp, ping.Nonce, body)
+		if cryptErr != nil {
+			log.Printf("decode error %#v", cryptErr)
+			return nil, errors.New("decode message error")
+		}
 	}
+
 	log.Printf("app receive data %s", string(msg))
 
 	message, err := getWXAppMsg(msg)
@@ -100,10 +115,18 @@ func encodeWeiXinMsg(msg *WXAppMsg, wx *wxbizmsgcrypt.WXBizMsgCrypt, ping *cores
 		log.Printf("marshal data %s error %#v", string(msgByte), err)
 		return nil, err
 	}
-	rsp, cryptErr := wx.EncryptMsg(string(msgByte), ping.TimeStamp, ping.Nonce)
-	if cryptErr != nil {
-		log.Printf("encode data %s error %#v", string(msgByte), cryptErr)
-		return nil, errors.New("encode message error")
+	var (
+		rsp      []byte
+		cryptErr *wxbizmsgcrypt.CryptError
+	)
+	if conf.Conf.ISDebug {
+		rsp = msgByte
+	} else {
+		rsp, cryptErr = wx.EncryptMsg(string(msgByte), ping.TimeStamp, ping.Nonce)
+		if cryptErr != nil {
+			log.Printf("encode data %s error %#v", string(msgByte), cryptErr)
+			return nil, errors.New("encode message error")
+		}
 	}
 	return rsp, nil
 }
@@ -111,7 +134,8 @@ func encodeWeiXinMsg(msg *WXAppMsg, wx *wxbizmsgcrypt.WXBizMsgCrypt, ping *cores
 func wxAutoReplyMsg(ctx context.Context, message *WXAppMsg) *WXAppMsg {
 	var rspMsg string
 
-	rawMsg := message.Content
+	rawMsg := utils.ReplaceString(message.Content, []string{" ", "\n"})
+
 	if rawMsg == "HELP" {
 		rspMsg = todos.HELP
 	} else {

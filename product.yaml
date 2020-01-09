@@ -1,2 +1,3 @@
 db_network: mysql_db
+redis_network: redis_db
 todo_network: weixin_todo

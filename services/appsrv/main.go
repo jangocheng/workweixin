@@ -17,6 +17,7 @@ func main() {
 	conf.InitConfig()
 	todos.InitToDoGRPC()
 	dbs.InitMySQL()
+	dbs.InitRedis()
 
 	var r = mux.NewRouter()
 	apis.NewRouters(r)
