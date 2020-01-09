@@ -7,8 +7,11 @@ import (
 	"net/http"
 
 	"github.com/vnotes/workweixin/services/contactsrv/conf"
+	"github.com/vnotes/workweixin/services/contactsrv/tracings"
 	"github.com/vnotes/workweixin/services/cores"
 
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
@@ -122,4 +125,14 @@ type WXContactMsg struct {
 	Gender     *int    `xml:"Gender"`
 	Status     *int    `xml:"Status"`
 	CreateTime int64   `xml:"CreateTime"`
+}
+
+func WXContactPong(w http.ResponseWriter, r *http.Request) {
+	spanCtx, err := tracings.Tracer.Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(r.Header))
+	if err != nil {
+		return
+	}
+	span := tracings.Tracer.StartSpan("ping-contact-pong", ext.RPCServerOption(spanCtx))
+	defer span.Finish()
+	_, _ = w.Write([]byte("pong"))
 }
