@@ -12,20 +12,25 @@ func WriteServerError(w http.ResponseWriter) {
 	_, _ = w.Write([]byte("server error"))
 }
 
-func WXPong(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
-	sig := r.Form.Get("msg_signature")
-	timeStamp := r.Form.Get("timestamp")
-	nonce := r.Form.Get("nonce")
-	echo := r.Form.Get("echostr")
+func WriteServerSuccess(w http.ResponseWriter, rsp []byte) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(rsp)
+}
 
-	echoStr, cryptErr := wx.VerifyURL(sig, timeStamp, nonce, echo)
+type WXPing struct {
+	MsgSignature string
+	TimeStamp    string
+	Nonce        string
+	Echo         string
+}
+
+func WXPong(ping *WXPing, wx *wxbizmsgcrypt.WXBizMsgCrypt) ([]byte, *wxbizmsgcrypt.CryptError) {
+	echoStr, cryptErr := wx.VerifyURL(ping.MsgSignature, ping.TimeStamp, ping.Echo, ping.Echo)
 	if cryptErr != nil {
 		log.Printf("verify error %+v", cryptErr)
-		WriteServerError(w)
-		return
+		return nil, cryptErr
 	}
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(echoStr)
+	return echoStr, cryptErr
 }
 
 type Response struct {

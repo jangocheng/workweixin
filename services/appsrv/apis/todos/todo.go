@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/vnotes/workweixin/utils"
+
 	"github.com/vnotes/workweixin/services/cores/grpc/todo"
 )
 
@@ -37,7 +39,7 @@ func queryToDoList(ctx context.Context, req *todo.ToDoRequest) (string, error) {
 	// 从缓存查询
 	var isFound bool
 	val, err := getToDoListByCache()
-	if err == nil && val == "" {
+	if err == nil && val != "" {
 		log.Println("从缓存查找 ToDoList 成功")
 		isFound = true
 	}
@@ -71,6 +73,7 @@ func ToDoCmd(ctx context.Context, cmd, userID, content string) (meta string) {
 		Content: content,
 		ToDoID:  0,
 	}
+	cmd = utils.ReplaceString(cmd, []string{" ", "\n"})
 	switch cmd {
 	case ToDoGet:
 		data, err := queryToDoList(ctx, req)

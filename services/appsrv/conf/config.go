@@ -16,6 +16,8 @@ type Config struct {
 	DBNetWork   string `yaml:"db_network"`
 	RedisWork   string `yaml:"redis_network"`
 	ToDoNetWork string `yaml:"todo_network"`
+
+	ISDebug bool `yaml:"is_debug"`
 }
 
 type SecretConf struct {
@@ -68,7 +70,7 @@ func InitConfig() {
 	if err := yaml.Unmarshal(data, Conf); err != nil {
 		log.Fatalf("unmarshal config file error %#v", err)
 	}
-	if Conf.DBNetWork == "" || Conf.ToDoNetWork == "" || Conf.RedisWork == ""{
+	if Conf.DBNetWork == "" || Conf.ToDoNetWork == "" || Conf.RedisWork == "" {
 		log.Fatal("config data is invalid")
 	}
 }

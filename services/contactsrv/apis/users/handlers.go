@@ -12,6 +12,21 @@ import (
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
+func getContactRequestParameter(r *http.Request) *cores.WXPing {
+	sig := r.Form.Get("msg_signature")
+	timeStamp := r.Form.Get("timestamp")
+	nonce := r.Form.Get("nonce")
+	echo := r.Form.Get("echostr")
+
+	rsp := &cores.WXPing{
+		MsgSignature: sig,
+		TimeStamp:    timeStamp,
+		Nonce:        nonce,
+		Echo:         echo,
+	}
+	return rsp
+}
+
 func WXContactAutoMated(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Printf("parse form error %s", err)
@@ -26,9 +41,16 @@ func WXContactAutoMated(w http.ResponseWriter, r *http.Request) {
 
 	wxCpt := wxbizmsgcrypt.NewWXBizMsgCrypt(token, aesKey, receiverID, wxbizmsgcrypt.XmlType)
 
+	reqParam := getContactRequestParameter(r)
+
 	switch r.Method {
 	case http.MethodGet:
-		cores.WXPong(w, r, wxCpt)
+		rsp, err := cores.WXPong(reqParam, wxCpt)
+		if err != nil {
+			cores.WriteServerError(w)
+			return
+		}
+		cores.WriteServerSuccess(w, rsp)
 	case http.MethodPost:
 		WXContactManager(w, r, wxCpt)
 	default:
