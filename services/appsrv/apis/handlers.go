@@ -1,7 +1,9 @@
 package apis
 
 import (
+	"context"
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,6 +26,21 @@ func getWeiXinCrypto() *wxbizmsgcrypt.WXBizMsgCrypt {
 	return wxCpt
 }
 
+func getAppRequestParameter(r *http.Request) *cores.WXPing {
+	sig := r.Form.Get("msg_signature")
+	timeStamp := r.Form.Get("timestamp")
+	nonce := r.Form.Get("nonce")
+	echo := r.Form.Get("echostr")
+
+	rsp := &cores.WXPing{
+		MsgSignature: sig,
+		TimeStamp:    timeStamp,
+		Nonce:        nonce,
+		Echo:         echo,
+	}
+	return rsp
+}
+
 func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Printf("parse form error %s", err)
@@ -33,42 +50,65 @@ func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 
 	wxCpt := getWeiXinCrypto()
 
+	reqParam := getAppRequestParameter(r)
+
 	switch r.Method {
 	case http.MethodGet:
-		cores.WXPong(w, r, wxCpt)
+		cores.WXPong(w, reqParam, wxCpt)
 	case http.MethodPost:
-		wxAutoReplyMsg(w, r, wxCpt)
+		message, err := decodeWeiXinMsg(r, wxCpt, reqParam)
+		if err != nil {
+			cores.WriteServerError(w)
+			return
+		}
+		newMessage := wxAutoReplyMsg(r.Context(), message)
+		response, err := encodeWeiXinMsg(newMessage, wxCpt, reqParam)
+		if err != nil {
+			cores.WriteServerError(w)
+			return
+		}
+		cores.WriteServerSuccess(w, response)
 	default:
 		log.Printf("server receive http method %s which is not supported", r.Method)
-		return
 	}
 }
 
-func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt) {
-	sig := r.Form.Get("msg_signature")
-	timeStamp := r.Form.Get("timestamp")
-	nonce := r.Form.Get("nonce")
+func decodeWeiXinMsg(r *http.Request, wx *wxbizmsgcrypt.WXBizMsgCrypt, ping *cores.WXPing) (*WXAppMsg, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("server read body error %#v", err)
-		cores.WriteServerError(w)
-		return
+		return nil, err
 	}
-	msg, cryptErr := wx.DecryptMsg(sig, timeStamp, nonce, body)
+	msg, cryptErr := wx.DecryptMsg(ping.MsgSignature, ping.TimeStamp, ping.Nonce, body)
 	if cryptErr != nil {
 		log.Printf("decode error %#v", cryptErr)
-		cores.WriteServerError(w)
-		return
+		return nil, errors.New("decode message error")
 	}
 	log.Printf("app receive data %s", string(msg))
 
 	message, err := getWXAppMsg(msg)
 	if err != nil {
 		log.Printf("msg %s unmarshal error %#v", string(msg), err)
-		cores.WriteServerError(w)
-		return
+		return nil, err
 	}
+	return message, nil
+}
 
+func encodeWeiXinMsg(msg *WXAppMsg, wx *wxbizmsgcrypt.WXBizMsgCrypt, ping *cores.WXPing) ([]byte, error) {
+	msgByte, err := xml.Marshal(msg)
+	if err != nil {
+		log.Printf("marshal data %s error %#v", string(msgByte), err)
+		return nil, err
+	}
+	rsp, cryptErr := wx.EncryptMsg(string(msgByte), ping.TimeStamp, ping.Nonce)
+	if cryptErr != nil {
+		log.Printf("encode data %s error %#v", string(msgByte), cryptErr)
+		return nil, errors.New("encode message error")
+	}
+	return rsp, nil
+}
+
+func wxAutoReplyMsg(ctx context.Context, message *WXAppMsg) *WXAppMsg {
 	var rspMsg string
 
 	rawMsg := message.Content
@@ -82,12 +122,12 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 				userID  = message.FromUserName
 				text    = content[1]
 			)
-			rspMsg = todos.ToDoCmd(r.Context(), cmd, userID, text)
+			rspMsg = todos.ToDoCmd(ctx, cmd, userID, text)
 		}
 	}
 
 	if rspMsg == "" {
-		return
+		return nil
 	}
 
 	replyMsgRsp := &WXAppMsg{
@@ -99,20 +139,7 @@ func wxAutoReplyMsg(w http.ResponseWriter, r *http.Request, wx *wxbizmsgcrypt.WX
 		MsgId:        message.MsgId,
 		AgentID:      message.AgentID,
 	}
-	msgByte, err := xml.Marshal(replyMsgRsp)
-	if err != nil {
-		log.Printf("marshal data %s error %#v", string(msgByte), err)
-		cores.WriteServerError(w)
-		return
-	}
-	rsp, cryptErr := wx.EncryptMsg(string(msgByte), timeStamp, nonce)
-	if cryptErr != nil {
-		log.Printf("encode data %s error %#v", string(msg), cryptErr)
-		cores.WriteServerError(w)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(rsp)
+	return replyMsgRsp
 }
 
 func getWXAppMsg(msg []byte) (*WXAppMsg, error) {
