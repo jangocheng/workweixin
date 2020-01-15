@@ -17,5 +17,4 @@ require (
 	go.uber.org/atomic v1.5.1 // indirect
 	google.golang.org/grpc v1.26.0
 	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
-	honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc // indirect
 )
