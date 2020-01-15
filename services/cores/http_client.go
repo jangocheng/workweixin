@@ -43,3 +43,17 @@ func (c *HttpClient) HttpDo(v interface{}) error {
 	}
 	return nil
 }
+
+func (c *HttpClient) JustDo() {
+	if c.err != nil {
+		return
+	}
+	_, _ = c.client.Do(c.request)
+}
+
+func (c *HttpClient) GetRequestHeader() http.Header {
+	if c.err != nil {
+		return nil
+	}
+	return c.request.Header
+}

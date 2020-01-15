@@ -10,4 +10,5 @@ import (
 
 func NewRouters(r *mux.Router) {
 	r.HandleFunc("/api/wx/contact/", users.WXContactAutoMated).Methods(http.MethodGet, http.MethodPost)
+	r.HandleFunc("/api/wx/contact/pong", users.WXContactPong)
 }

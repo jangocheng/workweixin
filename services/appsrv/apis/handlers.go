@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,9 +12,11 @@ import (
 
 	"github.com/vnotes/workweixin/services/appsrv/apis/todos"
 	"github.com/vnotes/workweixin/services/appsrv/conf"
+	"github.com/vnotes/workweixin/services/appsrv/tracings"
 	"github.com/vnotes/workweixin/services/cores"
 	"github.com/vnotes/workweixin/utils"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/sbzhu/weworkapi_golang/wxbizmsgcrypt"
 )
 
@@ -43,6 +46,11 @@ func getAppRequestParameter(r *http.Request) *cores.WXPing {
 }
 
 func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
+	span := tracings.Tracer.StartSpan("app-message")
+	defer span.Finish()
+
+	ctx := opentracing.ContextWithSpan(r.Context(), span)
+
 	if err := r.ParseForm(); err != nil {
 		log.Printf("parse form error %s", err)
 		cores.WriteServerError(w)
@@ -67,7 +75,7 @@ func WXAppAutoReply(w http.ResponseWriter, r *http.Request) {
 			cores.WriteServerError(w)
 			return
 		}
-		newMessage := wxAutoReplyMsg(r.Context(), message)
+		newMessage := wxAutoReplyMsg(ctx, message)
 		response, err := encodeWeiXinMsg(newMessage, wxCpt, reqParam)
 		if err != nil {
 			cores.WriteServerError(w)
@@ -146,6 +154,20 @@ func wxAutoReplyMsg(ctx context.Context, message *WXAppMsg) *WXAppMsg {
 				userID  = message.FromUserName
 				text    = content[1]
 			)
+			span, _ := opentracing.StartSpanFromContext(ctx, "todo-list-data")
+			defer span.Finish()
+
+			contactURL := fmt.Sprintf("http://%s:11110/api/wx/contact/pong", conf.Conf.ContactWork)
+			client := cores.InitClient("GET", contactURL, nil)
+			reqHeader := client.GetRequestHeader()
+			if reqHeader != nil {
+				_ = span.Tracer().Inject(
+					span.Context(),
+					opentracing.HTTPHeaders,
+					opentracing.HTTPHeadersCarrier(reqHeader),
+				)
+				client.JustDo()
+			}
 			rspMsg = todos.ToDoCmd(ctx, cmd, userID, text)
 		}
 	}
