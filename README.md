@@ -16,7 +16,9 @@
 
 `git checkout v0.6` 微服务拆分已经项目结构重构
 
-`git checkout v0.7` 加入链路跟踪
+`git checkout v0.7` 加入Redis缓存
+
+`git checkout v0.8` 加入链路跟踪
 
 程序运行：
 
