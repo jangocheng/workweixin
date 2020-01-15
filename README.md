@@ -16,14 +16,18 @@
 
 `git checkout v0.6` 微服务拆分已经项目结构重构
 
+`git checkout v0.7` 加入链路跟踪
+
 程序运行：
 
-1. `cd databases/  && ./init.sh && docker-compose up -d` 建立docker网络，启动 MySQL 服务
+1. `cd databases/  && ./init.sh && docker-compose up -d` 建立docker网络，启动 MySQL 和 Redis 服务
 
-2. `./run.sh` 构建基础镜像
+2. `./jaeger/.init.sh` 起 tracing 服务，通过 16686 端口进行查看信息。（用的是测试docker）
 
-3. `make todosrv action=up ` 启动 `todosrv` ，需要第一个启动
+3. `./run.sh` 构建基础镜像
 
-4. `make appsrv action=up` 启动 `appsrv`, 开启 微信企业应用服务
+4. `make todosrv action=up ` 启动 `todosrv` ，需要第一个启动
 
-5. `make contactsrv action=up` 开启 `contactsrv` 通信录管理服务
+5. `make appsrv action=up` 启动 `appsrv`, 开启 微信企业应用服务
+
+6. `make contactsrv action=up` 开启 `contactsrv` 通信录管理服务
