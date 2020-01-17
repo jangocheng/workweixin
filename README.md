@@ -22,7 +22,7 @@
 
 1. `cd databases/  && ./init.sh && docker-compose up -d` 建立docker网络，启动 MySQL 和 Redis 服务
 
-2. `./jaeger/.init.sh` 起 tracing 服务，通过 16686 端口进行查看信息。（用的是测试docker）
+2. `cd jaeger && docker-compose up -d` 起 tracing 服务，通过 16686 端口进行查看信息。（用的是测试docker）
 
 3. `./run.sh` 构建基础镜像
 
