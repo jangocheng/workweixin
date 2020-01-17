@@ -7,6 +7,8 @@ services:
       - ContactSecret=${ContactSecret}
       - ContactToken=${ContactToken}
       - ContactAesKey=${ContactAesKey}
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_AGENT_PORT=6831
     command: ./bin/contactsrv
     container_name: weixin_contact
     ports:
