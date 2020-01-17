@@ -8,6 +8,8 @@ services:
       - AppToken=${AppToken}
       - AppSecret=${AppSecret}
       - AppAesKey=${AppAesKey}
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_AGENT_PORT=6831
     command: ./bin/appsrv
     container_name: weixin_app
     ports:
