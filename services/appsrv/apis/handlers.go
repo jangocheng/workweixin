@@ -154,7 +154,7 @@ func wxAutoReplyMsg(ctx context.Context, message *WXAppMsg) *WXAppMsg {
 				userID  = message.FromUserName
 				text    = content[1]
 			)
-			span, _ := opentracing.StartSpanFromContext(ctx, "todo-list-data")
+			span, ctx := opentracing.StartSpanFromContext(ctx, "todo-list-data")
 			defer span.Finish()
 
 			contactURL := fmt.Sprintf("http://%s:11110/api/wx/contact/pong", conf.Conf.ContactWork)

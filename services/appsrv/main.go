@@ -17,15 +17,15 @@ import (
 const ServiceName = "weixin.appsrv"
 
 func main() {
-	conf.InitConfig()
-	todos.InitToDoGRPC()
-	dbs.InitMySQL()
-	dbs.InitRedis()
-
 	tracings.InitTracing(ServiceName)
 	defer func() {
 		_ = tracings.CloseTracer()
 	}()
+
+	conf.InitConfig()
+	todos.InitToDoGRPC(tracings.Tracer)
+	dbs.InitMySQL()
+	dbs.InitRedis()
 
 	var r = mux.NewRouter()
 	apis.NewRouters(r)
